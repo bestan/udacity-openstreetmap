@@ -345,6 +345,7 @@ It was very interesting to clean and explore the dataset of my hometown. It is c
 
 In terms of improving the dataset, I would propose adding better categorization. For example, amenities like `restaurant`, `fast_food`, `cafe` etc. don't have common tags, and so it would be quite difficult to aggregate, analyze and provide information of all food places. Therefore, it would be very useful to have a common tag such as `amenity.category = food`.
 
+I can see several problems that might occur during the implementation of this improvement. First of all, the dataset is quite large, which means that the effort is very high. It would be unfeasible to add the categories manually, but it is certainly possible to do this programmatically. However, programmatic approach might introduce errors to the dataset, which is why thorough validation of the categorization is crucial. Secondly, some amenities might have several categories at the same time. For example, most hotels also have restaurants, but we might not have data about it. Therefore, a lot of categories might be incomplete. It would be necessary to evaluate practical value of such categorization depending on scale of such incompleteness.
 
 ## Final code
 See [final.py](final.py).
