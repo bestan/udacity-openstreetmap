@@ -140,6 +140,51 @@ def convert_value_if_applicable(key, value):
     return value
 ```
 
+### Postcodes
+Standard way of representing postcodes in Latvia is `LV-XXXX`, where X can be any digit. Most postcodes in the dataset have correct format, but there are some entries that had to be cleaned, such as:
+- LV-2137 Garkalne
+- 1045
+- LV - 3002
+- LV2111
+- LV-2128;LV-2112
+
+Following regex pattern and python code were used to clean these values:
+
+```python
+
+postcode_pattern = re.compile(r'(LV)*[-]?\s*(\d{4})')
+
+def clean_postcode(postcode):
+    matches = postcode_pattern.findall(postcode)
+    postcodes = map(lambda x: 'LV-' + x[1], matches)
+
+    if len(postcodes) == 1:
+        return postcodes[0]
+    elif len(postcodes) > 1:
+        return postcodes
+    else:
+        return None
+
+...
+
+def shape_node_tags(element, node):
+
+...
+        if key.startswith('addr:'):
+            key = key.replace('addr:', '')
+
+            if ':' not in key:
+                if 'address' not in node:
+                    node['address'] = {}
+
+                if key == 'postcode':
+                    postcode = clean_postcode(value)
+                    if postcode:
+                        node['address']['postcode'] = postcode
+                else:
+                    node['address'][key] = value
+```
+
 ### Unicode characters
 The dataset has a lot of unicode characters - mostly Latvian and Russian languages.
 ```

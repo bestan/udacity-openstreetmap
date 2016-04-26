@@ -12,6 +12,19 @@ problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 CREATED = [ "version", "changeset", "timestamp", "user", "uid"]
 INTEGER_KEYS = ['maxspeed', 'frequency', 'layer', 'tracks', 'gauge']
 
+postcode_pattern = re.compile(r'(LV)*[-]?\s*(\d{4})')
+
+def clean_postcode(postcode):
+    matches = postcode_pattern.findall(postcode)
+    postcodes = map(lambda x: 'LV-' + x[1], matches)
+
+    if len(postcodes) == 1:
+        return postcodes[0]
+    elif len(postcodes) > 1:
+        return postcodes
+    else:
+        return None
+
 def shape_node_attributes(element, node):
     for key, value in element.attrib.iteritems():
 
@@ -93,7 +106,12 @@ def shape_node_tags(element, node):
                 if 'address' not in node:
                     node['address'] = {}
 
-                node['address'][key] = value
+                if key == 'postcode':
+                    postcode = clean_postcode(value)
+                    if postcode:
+                        node['address']['postcode'] = postcode
+                else:
+                    node['address'][key] = value
         else:
             d = node
             keys = key.split(':')
